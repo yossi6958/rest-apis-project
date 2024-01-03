@@ -10,3 +10,4 @@ redis
 Flask-Redis
 flask-migrate
 gunicorn
+psycopg2
