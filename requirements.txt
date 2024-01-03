@@ -9,3 +9,4 @@ passlib
 redis
 Flask-Redis
 flask-migrate
+gunicorn
