@@ -11,3 +11,5 @@ Flask-Redis
 flask-migrate
 gunicorn
 psycopg2
+requests
+rq

@@ -1,5 +1,3 @@
-# from datetime import timedelta
-# from flask_redis import FlaskRedis
 import os
 from blocklist import BLOCKLIST
 from flask import Flask, jsonify
@@ -19,11 +17,12 @@ def create_app(db_url=None):
     app = Flask(__name__)
     load_dotenv()
 
+
     app.config["API_TITLE"] = "Stores REST API"
     app.config["API_VERSION"] = "v1"
     app.config["OPENAPI_VERSION"] = "3.0.3"
     app.config["OPENAPI_URL_PREFIX"] = "/"
-    app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger-ui"
+    app.config["OPENAPI_SWAGGER_UI_PATH"] = "/"
     app.config[
         "OPENAPI_SWAGGER_UI_URL"
     ] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
@@ -39,10 +38,6 @@ def create_app(db_url=None):
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
     jwt = JWTManager(app)
-
-    # app.config['REDIS_URL'] = "redis://172.17.0.3"
-    # app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)  # Adjust as needed
-    # redis = FlaskRedis(app)
 
     @jwt.needs_fresh_token_loader
     def token_not_fresh_callback(jwt_header, jwt_payload):
@@ -99,9 +94,9 @@ def create_app(db_url=None):
             401,
         )
 
-    api.register_blueprint(ItemBlueprint)
-    api.register_blueprint(StoreBlueprint)
-    api.register_blueprint(TagBlueprint)
     api.register_blueprint(UserBlueprint)
+    api.register_blueprint(StoreBlueprint)
+    api.register_blueprint(ItemBlueprint)
+    api.register_blueprint(TagBlueprint)
 
     return app

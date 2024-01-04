@@ -9,6 +9,28 @@ from models import ItemModel
 blp = Blueprint("Items", __name__, description="Operations on items")
 
 
+@blp.route("/item")
+class ItemList(MethodView):
+    @jwt_required(fresh=True)
+    @blp.arguments(ItemSchema)
+    @blp.response(201, ItemSchema)
+    def post(self, item_data):
+        item = ItemModel(**item_data)
+
+        try:
+            db.session.add(item)
+            db.session.commit()
+        except SQLAlchemyError:
+            abort(500, message="An error occurred while inserting the item.")
+
+        return item
+
+    @jwt_required()
+    @blp.response(200, ItemSchema(many=True))
+    def get(self):
+        return ItemModel.query.all()
+
+
 @blp.route("/item/<int:item_id>")
 class Item(MethodView):
     @jwt_required()
@@ -36,27 +58,5 @@ class Item(MethodView):
 
         db.session.add(item)
         db.session.commit()
-
-        return item
-
-
-@blp.route("/item")
-class ItemList(MethodView):
-    @jwt_required()
-    @blp.response(200, ItemSchema(many=True))
-    def get(self):
-        return ItemModel.query.all()
-
-    @jwt_required(fresh=True)
-    @blp.arguments(ItemSchema)
-    @blp.response(201, ItemSchema)
-    def post(self, item_data):
-        item = ItemModel(**item_data)
-
-        try:
-            db.session.add(item)
-            db.session.commit()
-        except SQLAlchemyError:
-            abort(500, message="An error occurred while inserting the item.")
 
         return item
